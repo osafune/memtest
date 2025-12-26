@@ -267,7 +267,7 @@ int memtest(uint32_t memory_base, uint32_t memory_end)
 	ret_code = MemTestDataBus(memory_base);
 
 	if (ret_code) {
-		printf("  - Data bus test failed at bit 0x%x", ret_code);
+		printf("  - Data bus test failed at bit 0x%x\n", ret_code);
 	} else {
 		printf("  - Data bus test passed\n");
 	}
@@ -276,7 +276,7 @@ int memtest(uint32_t memory_base, uint32_t memory_end)
 	if (!ret_code) {
 		ret_code  = MemTestAddressBus(memory_base, memory_size);
     	if (ret_code) {
-			printf("  - Address bus test failed at address 0x%x", ret_code);
+			printf("  - Address bus test failed at address 0x%x\n", ret_code);
 		} else {
 			printf("  - Address bus test passed\n");
 		}
@@ -286,7 +286,7 @@ int memtest(uint32_t memory_base, uint32_t memory_end)
 	if (!ret_code) {
 		ret_code = MemTest8_16BitAccess(memory_base);
 		if (ret_code) {
-			printf("  - Byte and half-word access test failed at address 0x%x", ret_code);
+			printf("  - Byte and half-word access test failed at address 0x%x\n", ret_code);
 		} else {
 			printf("  - Byte and half-word access test passed\n");
 		}
@@ -297,7 +297,7 @@ int memtest(uint32_t memory_base, uint32_t memory_end)
 		printf("  - Testing each bit in memory device.");
 		ret_code = MemTestDevice(memory_base, memory_size);
 		if (ret_code) {
-			printf(" failed at address 0x%x", ret_code);
+			printf(" failed at address 0x%x\n", ret_code);
 		} else {
 			printf(" passed\n");
 		}
