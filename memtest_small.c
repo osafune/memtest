@@ -191,7 +191,7 @@ static uint32_t MemTest8_16BitAccess(uint32_t memory_base)
     }
   }
 
-  return(ret_code);
+  return ret_code;
 }
 
 
@@ -205,7 +205,7 @@ static uint32_t MemTest8_16BitAccess(uint32_t memory_base)
 static uint32_t MemTestDevice(uint32_t memory_base, uint32_t nBytes)
 {
   uint32_t offset;
-  uint32_t pattern;
+  uint32_t pattern, readdata;
   uint32_t antipattern;
   uint32_t ret_code = 0x0;
 
@@ -215,33 +215,38 @@ static uint32_t MemTestDevice(uint32_t memory_base, uint32_t nBytes)
     IOWR_32DIRECT(memory_base, offset, pattern);
   }
 
-  printf(" .");
-
   /* Check each location and invert it for the second pass. */
+  printf(" .");
   for (pattern = 1, offset = 0; offset < nBytes; pattern++, offset+=4)
   {
-    if (IORD_32DIRECT(memory_base, offset) != pattern)
+//    if (IORD_32DIRECT(memory_base, offset) != pattern)
+    readdata = IORD_32DIRECT(memory_base, offset);
+    if (readdata != pattern)
     {
-      ret_code = (memory_base + offset);
-      break;
+      printf("Actual: 0x%08x (Expected: 0x%08x) ", readdata, pattern);
+      ret_code = memory_base + offset;
+	  break;
     }
     antipattern = ~pattern;
     IOWR_32DIRECT(memory_base, offset, antipattern);
   }
 
-  printf(" .");
-
   /* Check each location for the inverted pattern and zero it. */
-  for (pattern = 1, offset = 0; offset < nBytes; pattern++, offset+=4)
+  if (!ret_code)
   {
-    antipattern = ~pattern;
-    if (IORD_32DIRECT(memory_base, offset) != antipattern)
+    printf(" .");
+    for (pattern = 1, offset = 0; offset < nBytes; pattern++, offset+=4)
     {
-      ret_code = (memory_base + offset);
-      break;
+      antipattern = ~pattern;
+      if (IORD_32DIRECT(memory_base, offset) != antipattern)
+      {
+        ret_code = memory_base + offset;
+		break;
+      }
+      IOWR_32DIRECT(memory_base, offset, 0x0);
     }
-    IOWR_32DIRECT(memory_base, offset, 0x0);
   }
+
   return ret_code;
 }
 
